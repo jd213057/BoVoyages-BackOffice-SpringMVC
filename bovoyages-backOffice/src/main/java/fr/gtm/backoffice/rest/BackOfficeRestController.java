@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,7 @@ import fr.gtm.backoffice.entities.Destination;
 import fr.gtm.backoffice.repositories.CommercialRepository;
 import fr.gtm.backoffice.repositories.DatesVoyageRepository;
 import fr.gtm.backoffice.repositories.DestinationRepository;
+import fr.gtm.backoffice.util.Digest;
 
 
 /**
@@ -28,7 +31,7 @@ import fr.gtm.backoffice.repositories.DestinationRepository;
  * @version 1.0 Controller de type REST de BoVoyages-BackOffice.
  * Controller de type Rest du Back Office BoVoyages.
  */
-@RestController
+@Controller
 public class BackOfficeRestController {
 
 	@Autowired
@@ -37,7 +40,14 @@ public class BackOfficeRestController {
 	private DestinationRepository destinationRepo;
 	@Autowired
 	private DatesVoyageRepository datesVoyageRepo;
-
+	
+	
+	@GetMapping(path="/")
+	public String signin( Model model) {
+		Commercial commercial = new Commercial();
+		model.addAttribute("commercial",commercial);
+		return "index";
+	}
 	/**
 	 * @param destination de type Destination
 	 * @return une confirmation de type String de la création d'une nouvelle
@@ -101,10 +111,11 @@ public class BackOfficeRestController {
 	/**
 	 * @return la liste de toutes les DestinationDTO valides (non rayees).
 	 */
-	@GetMapping("/destination/valid")
-	public List<Destination> getDestinationNotDeleted() {
+	@PostMapping("/destination/valid")
+	public String getDestinationNotDeleted(Model model) {
 		List<Destination> destinations = destinationRepo.getValidDestinations();
-		return destinations;
+		model.addAttribute("destinations",destinations);
+		return "destinations";
 	}
 
 	/**
@@ -145,26 +156,36 @@ public class BackOfficeRestController {
 	 * @throws NoSuchAlgorithmException.
 	 */
 	@PostMapping("/connexion")
-	public boolean connexionTo(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password)
+	public String connexionTo(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password)
 			throws NoSuchAlgorithmException {
 		boolean isAuth;
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		byte[] hash = md.digest(password.getBytes());
-		BigInteger number = new BigInteger(1, hash);
-		StringBuilder hexString = new StringBuilder(number.toString(16));
-		while (hexString.length() < 64) {
-			hexString.insert(0, '0');
-		}
-		String pwdFin = hexString.toString();
+//		MessageDigest md = MessageDigest.getInstance("SHA-256");
+//		byte[] hash = md.digest(password.getBytes());
+//		BigInteger number = new BigInteger(1, hash);
+//		StringBuilder hexString = new StringBuilder(number.toString(16));
+//		while (hexString.length() < 64) {
+//			hexString.insert(0, '0');
+//		}
+		String pwdFin = Digest.getStringSha256(password);;
 
 		Optional<Commercial> opt = commercialRepo.findByNomAndHashPassword(username, pwdFin);
-
-		if (opt.isPresent()) {
-			isAuth = true;
-			return isAuth;
-		}
-		isAuth = false;
-		return isAuth;
+		
+		isAuth= opt.isPresent()? true : false;
+//		if (opt.isPresent()) {
+//			isAuth = true;
+//			return isAuth;
+//		}
+//		isAuth = false;
+//		return isAuth;
+		if(isAuth) return "home";
+		return "index";
+	}
+	
+	@PostMapping("/signup/step1")
+	public String signing(Model model) {
+		Commercial commercial = new Commercial();
+		model.addAttribute("commercial",commercial);
+		return "signup";
 	}
 	
 	/**
@@ -173,19 +194,14 @@ public class BackOfficeRestController {
 	 * @return isAuth de type boolean.
 	 * @throws NoSuchAlgorithmException
 	 */
-	@PostMapping("/signup")
-	public boolean createCommercial(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password)
+	@PostMapping("/signup/step2")
+	public String createCommercial(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password)
 			throws NoSuchAlgorithmException {
-		boolean isAuth;
-		Optional<Commercial> client = commercialRepo.findByUsername(username);
-		if (!client.isPresent()) {
+		Optional<Commercial> commercial = commercialRepo.findByUsername(username);
+		boolean isAuth = !commercial.isPresent()? true : false;
+		if (!commercial.isPresent())
 			commercialRepo.createNewCommercial(username, password);
-			isAuth=true;
-			return isAuth;
-		}
-		 isAuth=false;
-		return isAuth;
-
+		return !commercial.isPresent()? "signin": "signup";	
 	}
 	
 	

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Valid Destinations</title>
+</head>
+<body>
+<h2>Toutes les destinations actuellement en base de donnée :</h2>
+<table>
+   <th:block th:each="destination : ${destinations}">
+      <tr>
+         <td th:text="${destination.region}">...</td>
+         <td th:text="${destination.description}">...</td>
+         
+      </tr>
+   </th:block>
+   <button>Accéder aux infos</button><button>Modifier</button><button>Supprimer</button>
+</table>
+</body>
+</html>

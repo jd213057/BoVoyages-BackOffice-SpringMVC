@@ -46,7 +46,7 @@ public interface CommercialRepository extends JpaRepository<Commercial, Long> {
 	 * @param password de type String.
 	 * @return un Client si il existe en BDD.
 	 */
-	@Query(value = "Select * From commerciaux c WHERE c.nom = ?1 and c.digest =?2", nativeQuery = true)
+	@Query(value = "Select * From commerciaux c WHERE c.username = ?1 and c.digest =?2", nativeQuery = true)
 	Optional<Commercial> findByNomAndHashPassword(String username, String pwdFin);
 
 }

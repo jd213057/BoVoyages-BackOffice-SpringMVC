@@ -2,18 +2,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Login Page</title>
+<title>Sign Up</title>
 </head>
 <body>
-<H2>Authentification</H2></br>
-<form th:action="@{connexion}" method="post">
+<form th:action="@{signup/step2}" method="post">
     User: <input type="text" th:value="*{username}" id="username" name="username"></br>
     Pswd : <input th:value="*{password}" id="password" name="password" type="password">
-    <button> Connexion </button>
- </form>   
- <form th:action="@{signup/step1}" method="post">
-<p><button> Sign-up </button></p>
-</form>
-
+    <button> Create Account </button>
 </body>
 </html>
