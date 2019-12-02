@@ -13,6 +13,7 @@
  <form th:action="@{destinationByRegion}" method="post">
 <p> <input type="text" th:value="*{region}" id="region" name="region"> <button> Rechercher </button></p>
 </form>
-
+<form method="POST" enctype="multipart/form-data" action="/images" >
+<button type="submit"> Uploader des images </button></form></br>
 </body>
 </html>

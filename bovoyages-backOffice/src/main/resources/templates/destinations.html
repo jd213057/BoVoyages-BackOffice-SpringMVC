@@ -23,13 +23,16 @@
      <div>  <tr>
          <td th:text="${destination.region}">Région:</td>
          <td th:text="${destination.description}">Description :</td>
-         
-      </tr>
+         <td> 
       <form th:action="@{destinationinfo}" method="post"><button type="submit">Accéder aux infos</button>
-      <input  th:value="*{destination.id}" id="id" name="id" ></form>
-      <button>Modifier</button>
+      <input  hidden="" th:value="*{destination.id}" id="id" name="id" ></form>
+      <form th:action="@{updatedestination}" method="POST"><button type="submit">Modifier</button>
+      <input hidden=""  th:value="*{destination.id}" id="id" name="id" ></form></form>
       <form th:action="@{deletedestination}" method="post"><button type="submit">Supprimer</button>
       <input hidden=""  th:value="*{destination.id}" id="id" name="id" ></form>
+      </td>
+      </tr>
+      
       </div>
    </th:block>
    
@@ -43,6 +46,12 @@
 <label for="region"> Région :</label><input type="text" th:value="*{region}" placeholder="Région" title="Région" id="region" name="region">
 <label for="description"> Description :</label><input type="text" th:value="*{description}"      placeholder="Description" title="Description" id="description " name="description"><button type="submit">Créer destination </button>
 </form>
+
+<div th:if="${message}">
+		<h2 th:text="${message}"/>
+	</div>
+
+
 <form th:action="@{home}" method="Post">
 <button type="submit">Page d'Acceuil</button>
 </form >

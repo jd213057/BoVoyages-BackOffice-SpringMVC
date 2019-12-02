@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Update Destination Form</title>
+</head>
+<body>
+<div th:if="${error}">
+<div class="errors">Erreur</div>
+</div>
+<h2 id="formulaire1">Formulaire de modification d'une destination:</h2>
+<form th:action="@{updatedestination2}" th:obkect="${destination}" method="post">
+<label for="region"> Région :</label><input type="text" th:value="*{region}" placeholder=${destination.region} title="Région" id="region" name="region">
+<label for="description"> Description :</label><input type="text" th:value="*{description}"      placeholder="${destination.description}" title="Description" id="description " name="description">
+<button type="submit">Modifier destination </button>
+<input hidden=""  th:value="*{destination.id}" id="id" name="id" ></form>
+</body>
+</html>

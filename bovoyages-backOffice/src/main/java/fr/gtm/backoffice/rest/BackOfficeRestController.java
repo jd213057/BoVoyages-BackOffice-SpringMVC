@@ -1,5 +1,6 @@
 package fr.gtm.backoffice.rest;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,21 +10,32 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fr.gtm.backoffice.entities.Commercial;
 import fr.gtm.backoffice.entities.DatesVoyage;
 import fr.gtm.backoffice.entities.Destination;
+import fr.gtm.backoffice.images.StorageFileNotFoundException;
+import fr.gtm.backoffice.images.StorageService;
 import fr.gtm.backoffice.repositories.CommercialRepository;
 import fr.gtm.backoffice.repositories.DatesVoyageRepository;
 import fr.gtm.backoffice.repositories.DestinationRepository;
@@ -54,6 +66,14 @@ public class BackOfficeRestController {
 	 */
 	@Autowired
 	private DatesVoyageRepository datesVoyageRepo;
+	
+	private final StorageService storageService;
+
+	@Autowired
+	public BackOfficeRestController(StorageService storageService) {
+		this.storageService = storageService;
+	}
+	
 	
 	
 	/**
@@ -147,6 +167,27 @@ public class BackOfficeRestController {
 		model.addAttribute("destinations",destinations);
 		return "destinations";
 	}
+	
+	@PostMapping("updatedestination2")
+	public String updateDestination2(@RequestParam(name="id") long id, @RequestParam(name="region") String region, @RequestParam(name="description") String description,Model model) {
+    Destination destination = destinationRepo.findById(id).get();
+	destination.setDescription(description);
+	destination.setRegion(region);
+	destinationRepo.save(destination);
+	List<Destination> destinations = destinationRepo.getValidDestinations();
+	model.addAttribute("destinations",destinations);
+	return "destinations";
+	}
+	
+	
+	@PostMapping("updatedestination")
+	public String updateDestination(@RequestParam(name="id") long id, Model model) {
+		Destination destination = destinationRepo.findById(id).get();
+		model.addAttribute("destination",destination);
+	return "updateDestinationForm";
+	}
+	
+	
 	
 	@PostMapping("createdestination")
 	public String createDestination(@RequestParam(name="region") String region, @RequestParam(name="description") String description,Model model) {
@@ -311,10 +352,47 @@ public class BackOfficeRestController {
 		return !commercial.isPresent()? "home": "signup";	
 	}
 	
-	
-	
-	
-	
-	
-	
+	@PostMapping("/images")
+	public String listUploadedFiles(Model model) throws IOException {
+
+		model.addAttribute("files", storageService.loadAll().map(
+				path -> MvcUriComponentsBuilder.fromMethodName(BackOfficeRestController.class,
+						"serveFile", path.getFileName().toString()).build().toString())
+				.collect(Collectors.toList()));
+
+		return "uploadForm";
+	}
+
+	@GetMapping("/files/{filename:.+}")
+	@ResponseBody
+	public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+
+		Resource file = storageService.loadAsResource(filename);
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+				"attachment; filename=\"" + file.getFilename() + "\"").body(file);
+	}
+
+	@PostMapping("/images2")
+	public String handleFileUpload(@RequestParam("file") MultipartFile file,
+			RedirectAttributes redirectAttributes) {
+
+		storageService.store(file);
+		redirectAttributes.addFlashAttribute("message",
+				"You successfully uploaded " + file.getOriginalFilename() + "!");
+
+		return "home";
+	}
+
+	@ExceptionHandler(StorageFileNotFoundException.class)
+	public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
+		return ResponseEntity.notFound().build();
+	}
+
 }
+
+	
+	
+	
+	
+	
+
