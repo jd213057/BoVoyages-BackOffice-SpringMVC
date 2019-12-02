@@ -18,12 +18,23 @@
          <td th:text="${datesVoyage.prixHT}">Prix HT/voyageur :</td>
       </tr>
       <button>Modifier</button>
-      <form th:action="@{deletedatevoyage}" method="post"><button type="submit">Supprimer</button>
-      <input hidden=""  th:value="*{destination.id}" id="id" name="id" ></form>
+      <form th:action="@{/deletedatevoyage}" method="post"><button type="submit">Supprimer</button>
+      <input hidden=""  th:value="*{datesVoyage.id}" id="id" name="id" ></form>
       </div>
    </th:block>
-   </table>
-   <button>Créer nouvelle date de voyage</button>
+   </table><div th:if="${error}">
+<div class="errors">Erreur</div>
+</div>
+<h2 id="formulaire1">Formulaire de création d'une date de voyage :</h2>
+<form th:action="@{createdatesvoyage}" method="post">
+<label for="dateAller"> Date Aller :</label><input type="date"  th:value="*{dateAller}" placeholder="Date Aller" title="Date Aller" id="dateAller" name="dateAller">
+<label for="dateRetour"> Date Retour :</label><input type="date" th:value="*{dateRetour}"  placeholder="Date Retour" title="Date Retour" id="dateRetour" name="dateRetour">
+<label for="prixHT"> prixHT :</label><input type="text" th:value="*{prixHT}" placeholder="Prix Hors taxes" title="Prix Hors taxes" id="prixHT" name="prixHT">
+<label for="nbrePlaces"> Nb Places:</label><input type="text" th:value="*{nbrePlaces}"  placeholder="nbrePlaces" title="nbrePlaces" id="nbrePlaces" name="nbrePlaces">
+<input hidden=""  th:value="*{destination.id}" id="idDestination" name="idDestination" >
+<button type="submit">Ajouter dates</button>
+</form>
+ 
    <form th:action="@{home}" method="Post">
 <button type="submit">Page d'Acceuil</button>
 </form >

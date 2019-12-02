@@ -3,7 +3,10 @@ package fr.gtm.backoffice.rest;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -150,7 +153,7 @@ public class BackOfficeRestController {
 	List<Destination> destinations =  destinationRepo.findDestinationByRegion(region);
 	Boolean error  = false;
 	for(Destination d : destinations) {
-		if(d.getRegion().equals(region)&& !d.isRaye()) {
+		if(d.getRegion().equals(region) && !d.isRaye()) {
 			error = true;
 			model.addAttribute("error",error);
 			List<Destination> destinations2 = destinationRepo.getValidDestinations();
@@ -162,6 +165,25 @@ public class BackOfficeRestController {
 	destinationRepo.save(new Destination(region, description, false));
 	return "home";
 	}
+	
+	@PostMapping("createdatesvoyage")
+	public String createDatesVoyage(@RequestParam(name="idDestination") long idDestination, @RequestParam(name = "dateAller") String dateAller,
+			@RequestParam(name = "dateRetour") String dateRetour, @RequestParam(name = "nbrePlaces") int nbrePlaces,
+			@RequestParam(name = "prixHT") float prixHT, Model model) throws ParseException {
+	SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateAllerF= fmt.parse(dateAller);
+		Date dateRetourF=fmt.parse(dateRetour);
+		DatesVoyage dateVoyage  = new DatesVoyage(dateAllerF, dateRetourF, prixHT, nbrePlaces);
+	destinationRepo.findById(idDestination).get().getDatesVoyages().add(dateVoyage);
+	destinationRepo.save(destinationRepo.findById(idDestination).get());
+	datesVoyageRepo.save(dateVoyage);
+	List<Destination> destinations = destinationRepo.getValidDestinations();
+	model.addAttribute("destinations",destinations);
+	return "destinations";	
+	}
+	
+	
+	
 	/**
 	 * @param id de type long.
 	 */
@@ -184,15 +206,52 @@ public class BackOfficeRestController {
 		return "Votre date de voyage avec comme description : " + datesVoyage.toString()
 				+ " a bien été sauvegardé dans la base de données.";
 	}
+	
+	/**
+	 * @param DatesVoyageId de type long.
+	 * @return une destination de type Destination correspondant à la date de voyage selectionnee.
+	 */
+	@GetMapping("/dates/destination/{id}")
+	public Destination getDestinationByDatesVoyageId(@PathVariable("id")long DatesVoyageId) {
+		List<Destination> destinations = destinationRepo.getValidDestinations();
+		for (Destination d : destinations) {
+	     List<DatesVoyage> datesvoyages = getValidDatesVoyagesByDestinationId(d.getId());
+		for( DatesVoyage dv : datesvoyages) {
+			if(dv.getId()==(DatesVoyageId)) {
+				return d;
+			}
+		}	
+	}
+		return null;}
+	
+	/**
+	 * @param id de type long.
+	 * @return une liste de DatesVoyage de toutes les dates valides pour une destination voulue.
+	 */
+	@GetMapping("/destination/dates/valid/{id}")
+	public List<DatesVoyage> getValidDatesVoyagesByDestinationId(@PathVariable("id") long id) {
+		List<DatesVoyage> datesVoyages = new ArrayList<>();
+		Destination destination = destinationRepo.getDestinationWithDatesById(id);
+		if(destination.isRaye())return null;
+		for (DatesVoyage d : destination.getDatesVoyages()) {
+			if (!d.isDeleted())
+				datesVoyages.add(d);
+		}
+		return datesVoyages;
+	}
 	/**
 	 * @param id de type long.
 	 */
-	@PostMapping("/destination/date/delete/{id}")
-	public void deleteDatesVoyageById(@PathVariable(name = "id") long id) {
+	@PostMapping("/deletedatevoyage")
+	public String deleteDatesVoyageById(@RequestParam(name = "id") long id, Model model) {
+		List<Destination> destinations = destinationRepo.getValidDestinations();
 		DatesVoyage datesVoyage = datesVoyageRepo.findById(id).get();
 		datesVoyage.setDeleted(true);
 		datesVoyageRepo.save(datesVoyage);
+		model.addAttribute("destinations",destinations);
+		return "destinations";
 	}
+	
 	
 	/**
 	 * @param nom de type String.
