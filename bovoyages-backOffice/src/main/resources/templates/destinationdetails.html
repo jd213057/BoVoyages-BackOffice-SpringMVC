@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Info</title>
+</head>
+<body>
+<div th:text="Voici les informations concernant ${destination} actuellement disponible :"></div>
+<th:block th:each="dateVoyage : ${dateVoyages}">
+     <div>  <tr>
+         <td th:text="${dateVoyage.dateAller}">Départ:</td>
+         <td th:text="${dateVoyage.dateRetour}">Retour :</td>
+         <td th:text="${dateVoyage.nbrePlaces}">Nb Places:</td>
+         <td th:text="${dateVoyage.prixHT}">Prix HT/voyageur :</td>
+      </tr>
+      <button>Modifier</button>
+      <form th:action="@{deletedatevoyage}" method="post"><button type="submit">Supprimer</button>
+      <input hidden=""  th:value="*{destination.id}" id="id" name="id" ></form>
+      </div>
+   </th:block>
+   <button>Créer nouvelle date de voyage</button>
+</body>
+</html>

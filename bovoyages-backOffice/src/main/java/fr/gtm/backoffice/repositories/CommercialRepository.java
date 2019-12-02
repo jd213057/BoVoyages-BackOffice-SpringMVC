@@ -22,8 +22,8 @@ public interface CommercialRepository extends JpaRepository<Commercial, Long> {
 	 * @param nom de type String.
 	 * @return le mot de passe chiffré du client correspondant.
 	 */
-	@Query(value = "SELECT digest from commerciaux WHERE commerciaux = ?1", nativeQuery = true)
-	String getValues(String nom);
+	@Query(value = "SELECT digest from commerciaux WHERE commerciaux.username = ?1", nativeQuery = true)
+	String getValues(String username);
 
 	/**
 	 * @param nom      de type String.
@@ -31,8 +31,8 @@ public interface CommercialRepository extends JpaRepository<Commercial, Long> {
 	 */
 	@Transactional
 	@Modifying
-	@Query(value = "INSERT INTO commerciaux (nom, digest) VALUES(?1, SHA2(?2,256))", nativeQuery = true)
-	void createNewCommercial(String nom, String password);
+	@Query(value = "INSERT INTO commerciaux (username, password, digest) VALUES(?1, ?2, SHA2(?2,256))", nativeQuery = true)
+	void createNewCommercial(String username, String password);
 
 	/**
 	 * @param nom de type String

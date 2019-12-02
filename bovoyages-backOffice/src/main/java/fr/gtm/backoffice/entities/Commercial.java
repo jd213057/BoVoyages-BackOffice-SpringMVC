@@ -15,6 +15,8 @@ public class Commercial implements Serializable {
     private String username;
     @Column(name="password")
     private String digest;
+    @Column(name="isauth")
+    private boolean isAuth;
     
     public Commercial() {}
 
@@ -23,6 +25,21 @@ public class Commercial implements Serializable {
 		this.id = id;
 		this.username = username;
 		this.digest = digest;
+	}
+	
+	
+
+	public Commercial(String username, String digest) {
+		super();
+		this.username = username;
+		this.digest = digest;
+		this.isAuth = false;
+	}
+
+	public Commercial(String username, boolean isAuth) {
+		super();
+		this.username = username;
+		this.isAuth = isAuth;
 	}
 
 	public Commercial(String username) {
@@ -54,12 +71,23 @@ public class Commercial implements Serializable {
 		this.digest = digest;
 	}
 
+	
+
+	public boolean isAuth() {
+		return isAuth;
+	}
+
+	public void setAuth(boolean isAuth) {
+		this.isAuth = isAuth;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((digest == null) ? 0 : digest.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + (isAuth ? 1231 : 1237);
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
@@ -79,6 +107,8 @@ public class Commercial implements Serializable {
 		} else if (!digest.equals(other.digest))
 			return false;
 		if (id != other.id)
+			return false;
+		if (isAuth != other.isAuth)
 			return false;
 		if (username == null) {
 			if (other.username != null)

@@ -8,13 +8,24 @@
 <h2>Toutes les destinations actuellement en base de donnée :</h2>
 <table>
    <th:block th:each="destination : ${destinations}">
-      <tr>
-         <td th:text="${destination.region}">...</td>
-         <td th:text="${destination.description}">...</td>
+     <div>  <tr>
+         <td th:text="${destination.region}">Région:</td>
+         <td th:text="${destination.description}">Description :</td>
          
       </tr>
+      <form th:action="@{destinationinfo}" method="post"><button type="submit">Accéder aux infos</button>
+      <input hidden=""  th:value="*{destination.id}" id="id" name="id" ></form>
+      <button>Modifier</button>
+      <form th:action="@{deletedestination}" method="post"><button type="submit">Supprimer</button>
+      <input hidden=""  th:value="*{destination.id}" id="id" name="id" ></form>
+      </div>
    </th:block>
-   <button>Accéder aux infos</button><button>Modifier</button><button>Supprimer</button>
+   
 </table>
+</br>
+<h2>Formulaire de création d'une destination:</h2>
+<form th:action="@{home}" method="Post">
+<button type="submit">Page d'Acceuil</button>
+</form >
 </body>
 </html>

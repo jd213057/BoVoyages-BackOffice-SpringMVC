@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,22 +33,45 @@ import fr.gtm.backoffice.util.Digest;
  * Controller de type Rest du Back Office BoVoyages.
  */
 @Controller
+@RequestMapping("/")
 public class BackOfficeRestController {
 
+	/**
+	 * Attribut commercialRepo de type CommercialRepository.
+	 */
 	@Autowired
 	private CommercialRepository commercialRepo;
+	/**
+	 * Attribut destinationRepo de type DestinationRepository.
+	 */
 	@Autowired
 	private DestinationRepository destinationRepo;
+	/**
+	 * Attribut datesVoyageRepo de type DatesVoyageRepository.
+	 */
 	@Autowired
 	private DatesVoyageRepository datesVoyageRepo;
 	
 	
+	/**
+	 * @param model de type Model.
+	 * @return la page HTML "index";
+	 */
 	@GetMapping(path="/")
 	public String signin( Model model) {
 		Commercial commercial = new Commercial();
 		model.addAttribute("commercial",commercial);
 		return "index";
 	}
+	
+	/**
+	 * @return la page HTML "home".
+	 */
+	@PostMapping("/home")
+	public String home() {
+		return "home";
+	}
+	
 	/**
 	 * @param destination de type Destination
 	 * @return une confirmation de type String de la création d'une nouvelle
@@ -66,8 +90,8 @@ public class BackOfficeRestController {
 	 * @return une liste de DatesVoyage de toutes les dates valides pour une
 	 *         destination voulue.
 	 */
-	@GetMapping("/destination/dates/valid/{id}")
-	public List<DatesVoyage> getValidDatesVoyagesByDestinationId(@PathVariable("id") long id) {
+	@PostMapping("destinationinfo")
+	public String getValidDatesVoyagesByDestinationId(@RequestParam("id") long id, Model model) {
 		List<DatesVoyage> datesVoyages = new ArrayList<>();
 		Destination destination = destinationRepo.getDestinationWithDatesById(id);
 		if (destination.isRaye())
@@ -76,7 +100,9 @@ public class BackOfficeRestController {
 			if (!d.isDeleted())
 				datesVoyages.add(d);
 		}
-		return datesVoyages;
+		model.addAttribute("destination", destination);
+		model.addAttribute("datesVoyages",datesVoyages);
+		return "destinationdetails";
 	}
 
 	/**
@@ -97,21 +123,22 @@ public class BackOfficeRestController {
 	 * @return la liste de toutes les destinations correspondante à la recherche par
 	 *         region associee.
 	 */
-	@GetMapping("/destination/byRegion")
-	public List<Destination> getDestinationsByRegion(@RequestParam(name = "region") String region) {
+	@PostMapping("/destinationByRegion")
+	public String getDestinationsByRegion(@RequestParam(name = "region") String region, Model model) {
 		List<Destination> destinations = destinationRepo.findDestinationByRegion(region);
 		List<Destination> destinationsFinal = new ArrayList<>();
 		for (Destination d : destinations) {
 			if (!d.isRaye())
 				destinationsFinal.add(d);
 		}
-		return destinationsFinal;
+		model.addAttribute("destinations",destinationsFinal);
+		return "destinations";
 	}
 
 	/**
 	 * @return la liste de toutes les DestinationDTO valides (non rayees).
 	 */
-	@PostMapping("/destination/valid")
+	@PostMapping("/destinationvalid")
 	public String getDestinationNotDeleted(Model model) {
 		List<Destination> destinations = destinationRepo.getValidDestinations();
 		model.addAttribute("destinations",destinations);
@@ -121,11 +148,12 @@ public class BackOfficeRestController {
 	/**
 	 * @param id de type long.
 	 */
-	@PostMapping("/destination/delete/{id}")
-	public void deleteDestinationById(@PathVariable(name = "id") long id) {
+	@PostMapping("deletedestination")
+	public String deleteDestinationById(@RequestParam(name = "id") long id, Model model) {
 		Destination destination = destinationRepo.findById(id).get();
 		destination.setRaye(true);
 		destinationRepo.save(destination);
+		return "home";
 	}
 
 	/**
@@ -181,7 +209,7 @@ public class BackOfficeRestController {
 		return "index";
 	}
 	
-	@PostMapping("/signup/step1")
+	@PostMapping("/signupform")
 	public String signing(Model model) {
 		Commercial commercial = new Commercial();
 		model.addAttribute("commercial",commercial);
@@ -194,15 +222,20 @@ public class BackOfficeRestController {
 	 * @return isAuth de type boolean.
 	 * @throws NoSuchAlgorithmException
 	 */
-	@PostMapping("/signup/step2")
-	public String createCommercial(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password)
+	@PostMapping("/confirmsignup")
+	public String createCommercial(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password, Model model)
 			throws NoSuchAlgorithmException {
 		Optional<Commercial> commercial = commercialRepo.findByUsername(username);
 		boolean isAuth = !commercial.isPresent()? true : false;
-		if (!commercial.isPresent())
+		if (!commercial.isPresent()) {
 			commercialRepo.createNewCommercial(username, password);
-		return !commercial.isPresent()? "signin": "signup";	
+			Optional<Commercial> commercial2 = commercialRepo.findByUsername(username);
+			
+		}
+		return !commercial.isPresent()? "home": "signup";	
 	}
+	
+	
 	
 	
 	

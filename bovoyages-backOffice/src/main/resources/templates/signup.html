@@ -5,7 +5,7 @@
 <title>Sign Up</title>
 </head>
 <body>
-<form th:action="@{signup/step2}" method="post">
+<form th:action="@{/confirmsignup}" method="post">
     User: <input type="text" th:value="*{username}" id="username" name="username"></br>
     Pswd : <input th:value="*{password}" id="password" name="password" type="password">
     <button> Create Account </button>

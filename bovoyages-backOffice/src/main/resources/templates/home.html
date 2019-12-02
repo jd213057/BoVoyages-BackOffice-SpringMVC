@@ -7,10 +7,10 @@
 <body>
 <h1>Bienvenue sur le Back Office de BoVoyages. </h1></br>
 <p> Veuillez choisir l'une des options ci-dessous:</p>
-<form th:action="@{destination/valid}" method="post">
+<form th:action="@{destinationvalid}" method="post">
 <button> Afficher toutes les destinations </button>
 </form>
- <form th:action="@{destination/byRegion}" method="post">
+ <form th:action="@{destinationByRegion}" method="post">
 <p> <input type="text" th:value="*{region}" id="region" name="region"> <button> Rechercher </button></p>
 </form>
 
