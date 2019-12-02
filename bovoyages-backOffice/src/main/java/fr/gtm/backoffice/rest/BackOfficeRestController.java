@@ -144,7 +144,24 @@ public class BackOfficeRestController {
 		model.addAttribute("destinations",destinations);
 		return "destinations";
 	}
-
+	
+	@PostMapping("createdestination")
+	public String createDestination(@RequestParam(name="region") String region, @RequestParam(name="description") String description,Model model) {
+	List<Destination> destinations =  destinationRepo.findDestinationByRegion(region);
+	Boolean error  = false;
+	for(Destination d : destinations) {
+		if(d.getRegion().equals(region)&& !d.isRaye()) {
+			error = true;
+			model.addAttribute("error",error);
+			List<Destination> destinations2 = destinationRepo.getValidDestinations();
+			model.addAttribute("destinations",destinations2);
+			return "destinations";
+			
+		}
+	}
+	destinationRepo.save(new Destination(region, description, false));
+	return "home";
+	}
 	/**
 	 * @param id de type long.
 	 */

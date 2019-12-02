@@ -5,19 +5,27 @@
 <title>Info</title>
 </head>
 <body>
-<div th:text="Voici les informations concernant ${destination} actuellement disponible :"></div>
-<th:block th:each="dateVoyage : ${dateVoyages}">
+<div th:object="${destination}"></div>
+<H2> Voici les informations concernant la destination :</H2>
+<h4>Région :</h4><div th:text="${destination.region}"></div>
+<h4>Description :</h4><div th:text="${destination.description}"></div>
+<table>
+<th:block th:each="datesVoyage : ${datesVoyages}">
      <div>  <tr>
-         <td th:text="${dateVoyage.dateAller}">Départ:</td>
-         <td th:text="${dateVoyage.dateRetour}">Retour :</td>
-         <td th:text="${dateVoyage.nbrePlaces}">Nb Places:</td>
-         <td th:text="${dateVoyage.prixHT}">Prix HT/voyageur :</td>
+         <td th:text="${datesVoyage.dateAller}">Départ:</td>
+         <td th:text="${datesVoyage.dateRetour}">Retour :</td>
+         <td th:text="${datesVoyage.nbrePlaces}">Nb Places:</td>
+         <td th:text="${datesVoyage.prixHT}">Prix HT/voyageur :</td>
       </tr>
       <button>Modifier</button>
       <form th:action="@{deletedatevoyage}" method="post"><button type="submit">Supprimer</button>
       <input hidden=""  th:value="*{destination.id}" id="id" name="id" ></form>
       </div>
    </th:block>
+   </table>
    <button>Créer nouvelle date de voyage</button>
+   <form th:action="@{home}" method="Post">
+<button type="submit">Page d'Acceuil</button>
+</form >
 </body>
 </html>
