@@ -218,7 +218,7 @@ public class BackOfficeRestController {
 	destinationRepo.findById(idDestination).get().getDatesVoyages().add(dateVoyage);
 	destinationRepo.save(destinationRepo.findById(idDestination).get());
 	datesVoyageRepo.save(dateVoyage);
-//	List<Destination> destinations = destinationRepo.getValidDestinations();
+///	List<Destination> destinations = destinationRepo.getValidDestinations();
 	List<DatesVoyage> datesVoyages = destinationRepo.findById(idDestination).get().getDatesVoyages();
 	for (DatesVoyage d : datesVoyages) {
 		if(d.isDeleted()) datesVoyages.remove(d);};
