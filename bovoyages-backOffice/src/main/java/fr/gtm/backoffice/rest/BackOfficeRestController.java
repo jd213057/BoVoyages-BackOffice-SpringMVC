@@ -175,11 +175,72 @@ public class BackOfficeRestController {
 		Date dateRetourF=fmt.parse(dateRetour);
 		DatesVoyage dateVoyage  = new DatesVoyage(dateAllerF, dateRetourF, prixHT, nbrePlaces);
 	destinationRepo.findById(idDestination).get().getDatesVoyages().add(dateVoyage);
-	destinationRepo.save(destinationRepo.findById(idDestination).get());
 	datesVoyageRepo.save(dateVoyage);
+	destinationRepo.save(destinationRepo.findById(idDestination).get());
+
 	List<Destination> destinations = destinationRepo.getValidDestinations();
 	model.addAttribute("destinations",destinations);
 	return "destinations";	
+	}
+	
+	
+	/*--------------- Modifier date --------------------------------------------------------------------------*/
+	
+	@PostMapping("modifierdate")
+	public String modifyDatesVoyage(@RequestParam(name="idDate") long idDate, Model model) throws ParseException {
+		
+		DatesVoyage dateVoyage = datesVoyageRepo.findById(idDate).get();
+		System.out.println(">>>>>>>>>>>>>>>>>" + dateVoyage.getId());
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+		String dateAllerF = fmt.format(dateVoyage.getDateAller());
+		Date dateAllerF2 = fmt.parse(dateAllerF);
+		dateVoyage.setDateAller(dateAllerF2);
+		
+		String dateRetourF = fmt.format(dateVoyage.getDateRetour());
+		Date dateRetourF2 = fmt.parse(dateRetourF);
+		dateVoyage.setDateRetour(dateRetourF2);
+		
+		model.addAttribute("dateVoyage",dateVoyage);
+		model.addAttribute("destinationId",idDate);
+		
+//	SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+//		Date dateAllerF= fmt.parse(dateAller);
+//		Date dateRetourF=fmt.parse(dateRetour);
+//		DatesVoyage dateVoyage  = new DatesVoyage(dateAllerF, dateRetourF, prixHT, nbrePlaces);
+//	destinationRepo.findById(idDestination).get().getDatesVoyages().add(dateVoyage);
+//	destinationRepo.save(destinationRepo.findById(idDestination).get());
+//	datesVoyageRepo.save(dateVoyage);
+//	List<Destination> destinations = destinationRepo.getValidDestinations();
+//	model.addAttribute("destinations",destinations);
+	return "modifier-date";	
+	}
+	
+	@PostMapping("modifierdate2")
+	public String modifyDatesVoyage2(@RequestParam(name = "dateAller") String dateAller,
+			@RequestParam(name = "dateRetour") String dateRetour, @RequestParam(name = "nbrePlaces") int nbrePlaces,
+			@RequestParam(name = "prixHT") float prixHT, @RequestParam(name = "idDateVoyage")long idDateVoyage, Model model) throws ParseException {
+		
+		
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateAllerF= fmt.parse(dateAller);
+		Date dateRetourF=fmt.parse(dateRetour);
+		DatesVoyage dateVoyageTemp = datesVoyageRepo.findById(idDateVoyage).get();
+		dateVoyageTemp.setDateAller(dateAllerF);
+		dateVoyageTemp.setDateRetour(dateRetourF);
+		dateVoyageTemp.setNbrePlaces(nbrePlaces);
+		dateVoyageTemp.setPrixHT(prixHT);
+		datesVoyageRepo.save(dateVoyageTemp);
+			
+//	SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+//		Date dateAllerF= fmt.parse(dateAller);
+//		Date dateRetourF=fmt.parse(dateRetour);
+//		DatesVoyage dateVoyage  = new DatesVoyage(dateAllerF, dateRetourF, prixHT, nbrePlaces);
+//	destinationRepo.findById(idDestination).get().getDatesVoyages().add(dateVoyage);
+//	destinationRepo.save(destinationRepo.findById(idDestination).get());
+//	datesVoyageRepo.save(dateVoyage);
+//	List<Destination> destinations = destinationRepo.getValidDestinations();
+//	model.addAttribute("destinations",destinations);
+	return "home";	
 	}
 	
 	

@@ -16,10 +16,15 @@
          <td th:text="${datesVoyage.dateRetour}">Retour :</td>
          <td th:text="${datesVoyage.nbrePlaces}">Nb Places:</td>
          <td th:text="${datesVoyage.prixHT}">Prix HT/voyageur :</td>
-      </tr>
-      <button>Modifier</button>
-      <form th:action="@{/deletedatevoyage}" method="post"><button type="submit">Supprimer</button>
+         <td><form th:action="@{/deletedatevoyage}" method="post"><button type="submit">Supprimer</button>
       <input hidden=""  th:value="*{datesVoyage.id}" id="id" name="id" ></form>
+      </td>
+      </tr> <!-- Bouton pour acceder au modif de dates------------------------------ -->
+         <form th:action="@{modifierdate}" method="Post">
+         <input hidden=""  th:value="*{datesVoyage.id}" id="idDate" name="idDate" >
+		<button type="submit">Modifier Date</button>
+		</form >
+
       </div>
    </th:block>
    </table><div th:if="${error}">
