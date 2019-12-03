@@ -116,7 +116,8 @@ public class BackOfficeRestController {
 	@PostMapping("destinationinfo")
 	public String getValidDatesVoyagesByDestinationId(@RequestParam("id") long id, Model model) {
 		List<DatesVoyage> datesVoyages = new ArrayList<>();
-		Destination destination = destinationRepo.getDestinationWithDatesById(id);
+//		Destination destination = destinationRepo.getDestinationWithDatesById(id);
+		Destination destination = destinationRepo.findById(id).get();
 		if (destination.isRaye())
 			return null;
 		for (DatesVoyage d : destination.getDatesVoyages()) {
@@ -125,6 +126,7 @@ public class BackOfficeRestController {
 		}
 		model.addAttribute("destination", destination);
 		model.addAttribute("datesVoyages",datesVoyages);
+		model.addAttribute("destinations", destinationRepo.getValidDestinations());
 		return "destinationdetails";
 	}
 
@@ -385,33 +387,28 @@ public class BackOfficeRestController {
 	 * @param id de type long.
 	 */
 	@PostMapping("/deletedatevoyage")
-	public String deleteDatesVoyageById(@RequestParam(name = "id") long id, Model model) {
-//		List<Destination> destinations = destinationRepo.getValidDestinations();
-		DatesVoyage datesVoyage = datesVoyageRepo.findById(id).get();
-		Destination destination = getDestinationByDatesVoyageId(id);
-		
-		datesVoyage.setDeleted(true);
-		datesVoyageRepo.save(datesVoyage);
-//		List<Destination> destinations = destinationRepo.getValidDestinations();
-//		Destination destination2= destinationRepo.findById(id).get();
-		List<DatesVoyage> datesvoyages2 = destination.getDatesVoyages();
-//		for (Destination d : destinations) {
-//	     List<DatesVoyage> datesvoyages = d.getDatesVoyages();
-//		for( DatesVoyage dv : datesvoyages) {
-//			if(dv.getId()==(id)) {
-//				destination = d;
-//				System.out.println(">>>>>>>>>>>>>>>>>>>>>>"+d.getDatesVoyages());
-//				break;
-//			}
-//		}
-//		return "error";
-//	}
-		
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>"+destination.getDatesVoyages());
-		model.addAttribute("destination",destination);
-		model.addAttribute("datesVoyages",datesvoyages2);
-		return "destinationdetails";
+	public String deleteDatesVoyageById(@RequestParam(name = "id") long id, @RequestParam(name="idDestination") long idDestination, Model model) {
+
+	DatesVoyage datesVoyage = datesVoyageRepo.findById(id).get();
+	datesVoyage.setDeleted(true);
+	datesVoyageRepo.save(datesVoyage);
+
+
+	List<DatesVoyage> datesVoyages = new ArrayList<>();
+	Destination destination = destinationRepo.getDestinationWithDatesById(idDestination);
+	//if (destination.isRaye())
+	//return null;
+	for (DatesVoyage d : destination.getDatesVoyages()) {
+	if (!d.isDeleted())
+	datesVoyages.add(d);
 	}
+	model.addAttribute("destination", destination);
+	model.addAttribute("datesVoyages",datesVoyages);
+	return "destinationdetails";
+
+	}
+		
+		
 	
 	
 	/**

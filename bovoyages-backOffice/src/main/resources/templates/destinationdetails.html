@@ -28,6 +28,7 @@
 						<form th:action="@{/deletedatevoyage}" method="post">
 							<button type="submit">Supprimer</button>
 							<input hidden="" th:value="*{datesVoyage.id}" id="id" name="id">
+							<input hidden="" th:value="*{destination.id}" id="idDestination" name="idDestination">
 						</form>
 					</td>
 				</tr>
