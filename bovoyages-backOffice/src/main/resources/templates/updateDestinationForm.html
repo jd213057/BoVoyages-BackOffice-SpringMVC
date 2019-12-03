@@ -14,5 +14,6 @@
 <label for="description"> Description :</label><input type="text" th:value="*{description}"      placeholder="${destination.description}" title="Description" id="description " name="description">
 <button type="submit">Modifier destination </button>
 <input hidden=""  th:value="*{destination.id}" id="id" name="id" ></form>
+<form th:action="@{backtodestinations}"><button type="submit"> Retour </button></form>
 </body>
 </html>

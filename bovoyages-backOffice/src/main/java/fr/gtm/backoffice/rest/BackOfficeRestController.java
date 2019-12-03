@@ -90,7 +90,7 @@ public class BackOfficeRestController {
 	/**
 	 * @return la page HTML "home".
 	 */
-	@PostMapping("/home")
+	@GetMapping("/home")
 	public String home() {
 		return "home";
 	}
@@ -218,9 +218,13 @@ public class BackOfficeRestController {
 	destinationRepo.findById(idDestination).get().getDatesVoyages().add(dateVoyage);
 	destinationRepo.save(destinationRepo.findById(idDestination).get());
 	datesVoyageRepo.save(dateVoyage);
-	List<Destination> destinations = destinationRepo.getValidDestinations();
-	model.addAttribute("destinations",destinations);
-	return "destinations";	
+//	List<Destination> destinations = destinationRepo.getValidDestinations();
+	List<DatesVoyage> datesVoyages = destinationRepo.findById(idDestination).get().getDatesVoyages();
+	for (DatesVoyage d : datesVoyages) {
+		if(d.isDeleted()) datesVoyages.remove(d);};
+	model.addAttribute("destination",destinationRepo.findById(idDestination).get());
+	model.addAttribute("datesVoyages",datesVoyages);
+	return "destinationdetails";	
 	}
 	
 	
@@ -386,6 +390,13 @@ public class BackOfficeRestController {
 	@ExceptionHandler(StorageFileNotFoundException.class)
 	public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
 		return ResponseEntity.notFound().build();
+	}
+	
+	@GetMapping("backtodestinations")
+	public String getBacktoDestinationsPage(Model model) {
+		List<Destination> destinations = destinationRepo.getValidDestinations();
+		model.addAttribute("destinations", destinations);
+		return "destinations";
 	}
 
 }

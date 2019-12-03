@@ -16,10 +16,13 @@
          <td th:text="${datesVoyage.dateRetour}">Retour :</td>
          <td th:text="${datesVoyage.nbrePlaces}">Nb Places:</td>
          <td th:text="${datesVoyage.prixHT}">Prix HT/voyageur :</td>
-      </tr>
-      <button>Modifier</button>
+         <td>
+         <button>Modifier</button>
       <form th:action="@{/deletedatevoyage}" method="post"><button type="submit">Supprimer</button>
       <input hidden=""  th:value="*{datesVoyage.id}" id="id" name="id" ></form>
+          </td>
+      </tr>
+      
       </div>
    </th:block>
    </table><div th:if="${error}">
@@ -35,8 +38,9 @@
 <button type="submit">Ajouter dates</button>
 </form>
  
-   <form th:action="@{home}" method="Post">
+   <form th:action="@{home}" method="GET">
 <button type="submit">Page d'Acceuil</button>
 </form >
+<form th:action="@{backtodestinations}"><button type="submit"> Retour </button></form>
 </body>
 </html>
