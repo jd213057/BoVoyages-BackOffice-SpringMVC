@@ -5,42 +5,63 @@
 <title>Info</title>
 </head>
 <body>
-<div th:object="${destination}"></div>
-<H2> Voici les informations concernant la destination :</H2>
-<h4>Région :</h4><div th:text="${destination.region}"></div>
-<h4>Description :</h4><div th:text="${destination.description}"></div>
-<table>
-<th:block th:each="datesVoyage : ${datesVoyages}">
-     <div>  <tr>
-         <td th:text="${datesVoyage.dateAller}">Départ:</td>
-         <td th:text="${datesVoyage.dateRetour}">Retour :</td>
-         <td th:text="${datesVoyage.nbrePlaces}">Nb Places:</td>
-         <td th:text="${datesVoyage.prixHT}">Prix HT/voyageur :</td>
-         <td>
-         <button>Modifier</button>
-      <form th:action="@{/deletedatevoyage}" method="post"><button type="submit">Supprimer</button>
-      <input hidden=""  th:value="*{datesVoyage.id}" id="id" name="id" ></form>
-          </td>
-      </tr>
-      
-      </div>
-   </th:block>
-   </table><div th:if="${error}">
-<div class="errors">Erreur</div>
-</div>
-<h2 id="formulaire1">Formulaire de création d'une date de voyage :</h2>
-<form th:action="@{createdatesvoyage}" method="post">
-<label for="dateAller"> Date Aller :</label><input type="date"  th:value="*{dateAller}" placeholder="Date Aller" title="Date Aller" id="dateAller" name="dateAller">
-<label for="dateRetour"> Date Retour :</label><input type="date" th:value="*{dateRetour}"  placeholder="Date Retour" title="Date Retour" id="dateRetour" name="dateRetour">
-<label for="prixHT"> prixHT :</label><input type="text" th:value="*{prixHT}" placeholder="Prix Hors taxes" title="Prix Hors taxes" id="prixHT" name="prixHT">
-<label for="nbrePlaces"> Nb Places:</label><input type="text" th:value="*{nbrePlaces}"  placeholder="nbrePlaces" title="nbrePlaces" id="nbrePlaces" name="nbrePlaces">
-<input hidden=""  th:value="*{destination.id}" id="idDestination" name="idDestination" >
-<button type="submit">Ajouter dates</button>
-</form>
- 
-   <form th:action="@{home}" method="GET">
-<button type="submit">Page d'Acceuil</button>
-</form >
-<form th:action="@{backtodestinations}"><button type="submit"> Retour </button></form>
+	<div th:object="${destination}"></div>
+	<H2>Voici les informations concernant la destination :</H2>
+	<h4>Région :</h4>
+	<div th:text="${destination.region}"></div>
+	<h4>Description :</h4>
+	<div th:text="${destination.description}"></div>
+	<table>
+		<th:block th:each="datesVoyage : ${datesVoyages}">
+			<div>
+				<tr>
+					<td th:text="${datesVoyage.dateAller}">Départ:</td>
+					<td th:text="${datesVoyage.dateRetour}">Retour :</td>
+					<td th:text="${datesVoyage.nbrePlaces}">Nb Places:</td>
+					<td th:text="${datesVoyage.prixHT}">Prix HT/voyageur :</td>
+					<td>
+						<form th:action="@{modifierdate}" method="Post">
+							<input hidden="" th:value="*{datesVoyage.id}" id="idDate"
+								name="idDate">
+							<button type="submit">Modifier Date</button>
+						</form>
+						<form th:action="@{/deletedatevoyage}" method="post">
+							<button type="submit">Supprimer</button>
+							<input hidden="" th:value="*{datesVoyage.id}" id="id" name="id">
+						</form>
+					</td>
+				</tr>
+
+
+
+			</div>
+		</th:block>
+	</table>
+	<div th:if="${error}">
+		<div class="errors">Erreur</div>
+	</div>
+	<h2 id="formulaire1">Formulaire de création d'une date de voyage :</h2>
+	<form th:action="@{createdatesvoyage}" method="post">
+		<label for="dateAller"> Date Aller :</label><input type="date"
+			th:value="*{dateAller}" placeholder="Date Aller" title="Date Aller"
+			id="dateAller" name="dateAller"> <label for="dateRetour">
+			Date Retour :</label><input type="date" th:value="*{dateRetour}"
+			placeholder="Date Retour" title="Date Retour" id="dateRetour"
+			name="dateRetour"> <label for="prixHT"> prixHT :</label><input
+			type="text" th:value="*{prixHT}" placeholder="Prix Hors taxes"
+			title="Prix Hors taxes" id="prixHT" name="prixHT"> <label
+			for="nbrePlaces"> Nb Places:</label><input type="text"
+			th:value="*{nbrePlaces}" placeholder="nbrePlaces" title="nbrePlaces"
+			id="nbrePlaces" name="nbrePlaces"> <input hidden=""
+			th:value="*{destination.id}" id="idDestination" name="idDestination">
+		<button type="submit">Ajouter dates</button>
+	</form>
+
+	<form th:action="@{home}" method="GET">
+		<button type="submit">Page d'Acceuil</button>
+	</form>
+	<form th:action="@{backtodestinations}">
+		<button type="submit">Retour</button>
+	</form>
 </body>
 </html>

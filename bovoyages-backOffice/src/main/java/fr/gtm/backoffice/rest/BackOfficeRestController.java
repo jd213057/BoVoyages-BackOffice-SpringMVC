@@ -204,26 +204,121 @@ public class BackOfficeRestController {
 		}
 	}
 	destinationRepo.save(new Destination(region, description, false));
-	return "home";
+	List<Destination> destinations2 = destinationRepo.getValidDestinations();
+	model.addAttribute("destinations",destinations2);
+	return "destinations";
 	}
 	
 	@PostMapping("createdatesvoyage")
-	public String createDatesVoyage(@RequestParam(name="idDestination") long idDestination, @RequestParam(name = "dateAller") String dateAller,
+    public String addDatesVoyagesToDestination(
+                    @RequestParam("idDestination") long idDestination,
+                    @RequestParam("dateAller") String dateAller,
+                    @RequestParam("dateRetour") String dateRetour,
+                    @RequestParam("prixHT") float prixHT,
+                    @RequestParam("nbrePlaces") int nbrePlaces,
+                    Model model) throws ParseException{
+            SimpleDateFormat franck = new SimpleDateFormat("yyyy-MM-dd");
+            Destination dest = destinationRepo.findById(idDestination).get();
+            List<DatesVoyage> listeDates = dest.getDatesVoyages();
+            Date newAller=franck.parse(dateAller);
+            Date newRetour=franck.parse(dateRetour);
+            DatesVoyage newDate=new DatesVoyage();
+            newDate.setDateAller(newAller);
+            newDate.setDateRetour(newRetour);
+            newDate.setDeleted(false);
+            newDate.setNbrePlaces(nbrePlaces);
+            newDate.setPrixHT(prixHT);
+            listeDates.add(newDate);
+            dest.setDatesVoyages(listeDates);
+            destinationRepo.save(dest);
+            Destination destination = destinationRepo.findById(idDestination).get();
+            model.addAttribute("destination", destination);
+            List<DatesVoyage> datess = destination.getDatesVoyages();
+            List<DatesVoyage> datesVoyages = new ArrayList<DatesVoyage>();
+            for (DatesVoyage d : datess) {
+                    if (d.isDeleted() == false) {
+                    	datesVoyages.add(d);
+                    }
+            }
+            model.addAttribute("datesVoyages", datesVoyages);
+            return "destinationdetails";
+    }
+	
+//	@PostMapping("createdatesvoyage")
+//	public String createDatesVoyage(@RequestParam(name="idDestination") long idDestination, @RequestParam(name = "dateAller") String dateAller,
+//			@RequestParam(name = "dateRetour") String dateRetour, @RequestParam(name = "nbrePlaces") int nbrePlaces,
+//			@RequestParam(name = "prixHT") float prixHT, Model model) throws ParseException {
+//	SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+//		Date dateAllerF= fmt.parse(dateAller);
+//		Date dateRetourF=fmt.parse(dateRetour);
+//		DatesVoyage dateVoyage  = new DatesVoyage(dateAllerF, dateRetourF, prixHT, nbrePlaces);
+//	destinationRepo.findById(idDestination).get().getDatesVoyages().add(dateVoyage);
+//	destinationRepo.save(destinationRepo.findById(idDestination).get());
+//	datesVoyageRepo.save(dateVoyage);
+/////	List<Destination> destinations = destinationRepo.getValidDestinations();
+//	List<DatesVoyage> datesVoyages = destinationRepo.findById(idDestination).get().getDatesVoyages();
+//	for (DatesVoyage d : datesVoyages) {
+//		if(d.isDeleted()) datesVoyages.remove(d);};
+//	model.addAttribute("destination",destinationRepo.findById(idDestination).get());
+//	model.addAttribute("datesVoyages",datesVoyages);
+//	return "destinationdetails";	
+//	}
+	
+	@PostMapping("modifierdate")
+	public String modifyDatesVoyage(@RequestParam(name="idDate") long idDate, Model model) throws ParseException {
+		
+		DatesVoyage dateVoyage = datesVoyageRepo.findById(idDate).get();
+		System.out.println(">>>>>>>>>>>>>>>>>" + dateVoyage.getId());
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+		String dateAllerF = fmt.format(dateVoyage.getDateAller());
+		Date dateAllerF2 = fmt.parse(dateAllerF);
+		dateVoyage.setDateAller(dateAllerF2);
+		
+		String dateRetourF = fmt.format(dateVoyage.getDateRetour());
+		Date dateRetourF2 = fmt.parse(dateRetourF);
+		dateVoyage.setDateRetour(dateRetourF2);
+		
+		model.addAttribute("dateVoyage",dateVoyage);
+		model.addAttribute("destinationId",idDate);
+		
+//	SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+//		Date dateAllerF= fmt.parse(dateAller);
+//		Date dateRetourF=fmt.parse(dateRetour);
+//		DatesVoyage dateVoyage  = new DatesVoyage(dateAllerF, dateRetourF, prixHT, nbrePlaces);
+//	destinationRepo.findById(idDestination).get().getDatesVoyages().add(dateVoyage);
+//	destinationRepo.save(destinationRepo.findById(idDestination).get());
+//	datesVoyageRepo.save(dateVoyage);
+//	List<Destination> destinations = destinationRepo.getValidDestinations();
+//	model.addAttribute("destinations",destinations);
+	return "modifier-date";	
+	}
+	
+	@PostMapping("modifierdate2")
+	public String modifyDatesVoyage2(@RequestParam(name = "dateAller") String dateAller,
 			@RequestParam(name = "dateRetour") String dateRetour, @RequestParam(name = "nbrePlaces") int nbrePlaces,
-			@RequestParam(name = "prixHT") float prixHT, Model model) throws ParseException {
-	SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+			@RequestParam(name = "prixHT") float prixHT, @RequestParam(name = "idDateVoyage")long idDateVoyage, Model model) throws ParseException {
+		
+		
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateAllerF= fmt.parse(dateAller);
 		Date dateRetourF=fmt.parse(dateRetour);
-		DatesVoyage dateVoyage  = new DatesVoyage(dateAllerF, dateRetourF, prixHT, nbrePlaces);
-	destinationRepo.findById(idDestination).get().getDatesVoyages().add(dateVoyage);
-	destinationRepo.save(destinationRepo.findById(idDestination).get());
-	datesVoyageRepo.save(dateVoyage);
-///	List<Destination> destinations = destinationRepo.getValidDestinations();
-	List<DatesVoyage> datesVoyages = destinationRepo.findById(idDestination).get().getDatesVoyages();
-	for (DatesVoyage d : datesVoyages) {
-		if(d.isDeleted()) datesVoyages.remove(d);};
-	model.addAttribute("destination",destinationRepo.findById(idDestination).get());
-	model.addAttribute("datesVoyages",datesVoyages);
+		DatesVoyage dateVoyageTemp = datesVoyageRepo.findById(idDateVoyage).get();
+		dateVoyageTemp.setDateAller(dateAllerF);
+		dateVoyageTemp.setDateRetour(dateRetourF);
+		dateVoyageTemp.setNbrePlaces(nbrePlaces);
+		dateVoyageTemp.setPrixHT(prixHT);
+		datesVoyageRepo.save(dateVoyageTemp);
+		model.addAttribute("destination",getDestinationByDatesVoyageId(idDateVoyage));
+		model.addAttribute("datesVoyages",getDestinationByDatesVoyageId(idDateVoyage).getDatesVoyages());
+//	SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+//		Date dateAllerF= fmt.parse(dateAller);
+//		Date dateRetourF=fmt.parse(dateRetour);
+//		DatesVoyage dateVoyage  = new DatesVoyage(dateAllerF, dateRetourF, prixHT, nbrePlaces);
+//	destinationRepo.findById(idDestination).get().getDatesVoyages().add(dateVoyage);
+//	destinationRepo.save(destinationRepo.findById(idDestination).get());
+//	datesVoyageRepo.save(dateVoyage);
+//	List<Destination> destinations = destinationRepo.getValidDestinations();
+//	model.addAttribute("destinations",destinations);
 	return "destinationdetails";	
 	}
 	
@@ -237,7 +332,9 @@ public class BackOfficeRestController {
 		Destination destination = destinationRepo.findById(id).get();
 		destination.setRaye(true);
 		destinationRepo.save(destination);
-		return "home";
+		List<Destination> destinations = destinationRepo.getValidDestinations();
+		model.addAttribute("destinations", destinations);
+		return "destinations";
 	}
 
 	/**
@@ -289,12 +386,31 @@ public class BackOfficeRestController {
 	 */
 	@PostMapping("/deletedatevoyage")
 	public String deleteDatesVoyageById(@RequestParam(name = "id") long id, Model model) {
-		List<Destination> destinations = destinationRepo.getValidDestinations();
+//		List<Destination> destinations = destinationRepo.getValidDestinations();
 		DatesVoyage datesVoyage = datesVoyageRepo.findById(id).get();
+		Destination destination = getDestinationByDatesVoyageId(id);
+		
 		datesVoyage.setDeleted(true);
 		datesVoyageRepo.save(datesVoyage);
-		model.addAttribute("destinations",destinations);
-		return "destinations";
+//		List<Destination> destinations = destinationRepo.getValidDestinations();
+//		Destination destination2= destinationRepo.findById(id).get();
+		List<DatesVoyage> datesvoyages2 = destination.getDatesVoyages();
+//		for (Destination d : destinations) {
+//	     List<DatesVoyage> datesvoyages = d.getDatesVoyages();
+//		for( DatesVoyage dv : datesvoyages) {
+//			if(dv.getId()==(id)) {
+//				destination = d;
+//				System.out.println(">>>>>>>>>>>>>>>>>>>>>>"+d.getDatesVoyages());
+//				break;
+//			}
+//		}
+//		return "error";
+//	}
+		
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>"+destination.getDatesVoyages());
+		model.addAttribute("destination",destination);
+		model.addAttribute("datesVoyages",datesvoyages2);
+		return "destinationdetails";
 	}
 	
 	
@@ -319,15 +435,15 @@ public class BackOfficeRestController {
 
 		Optional<Commercial> opt = commercialRepo.findByNomAndHashPassword(username, pwdFin);
 		
-		isAuth= opt.isPresent()? true : false;
+		return opt.isPresent()? "home" : "index";
 //		if (opt.isPresent()) {
 //			isAuth = true;
 //			return isAuth;
 //		}
 //		isAuth = false;
 //		return isAuth;
-		if(isAuth) return "home";
-		return "index";
+//		if(isAuth) return "home";
+//		return "index";
 	}
 	
 	@PostMapping("/signupform")
@@ -336,6 +452,7 @@ public class BackOfficeRestController {
 		model.addAttribute("commercial",commercial);
 		return "signup";
 	}
+	
 	
 	/**
 	 * @param nom de type String.
@@ -397,6 +514,13 @@ public class BackOfficeRestController {
 		List<Destination> destinations = destinationRepo.getValidDestinations();
 		model.addAttribute("destinations", destinations);
 		return "destinations";
+	}
+	
+	@PostMapping("backtodestinationdetails") 
+	public String getBackToDestinationDetailsPage(@RequestParam("idDateVoyage") long idDateVoyage, Model model) {
+		model.addAttribute("destination",getDestinationByDatesVoyageId(idDateVoyage));
+		model.addAttribute("datesVoyages",getDestinationByDatesVoyageId(idDateVoyage).getDatesVoyages());
+		return "destinationdetails";
 	}
 
 }

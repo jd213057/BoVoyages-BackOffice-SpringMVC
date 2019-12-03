@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+<h2>Modification de la date:</h2>
+
+<div th:object="${dateVoyage}"></div>
+
+Etat actuel de la date : 
+
+<table>
+
+      <tr>
+      	<td>- Départ :</td>
+         <td th:text="${dateVoyage.dateAller}">Départ:</td>
+         <td>- Retour :</td>
+         <td th:text="${dateVoyage.dateRetour}">Retour :</td>
+         <td>- Nombre de places :</td>
+         <td th:text="${dateVoyage.nbrePlaces}">Nb Places:</td>
+         <td>- Prix HT:</td>
+         <td th:text="${dateVoyage.prixHT}">Prix HT/voyageur :</td>
+
+      </tr>
+<table>
+
+
+
+<form th:action="@{modifierdate2}" method="post">
+<label for="dateAller"> Date Aller :</label><input type="date"  th:value="*{dateAller}" placeholder='' title="Date Aller" id="dateAller" name="dateAller" required>
+<label for="dateRetour"> Date Retour :</label><input type="date" th:value="*{dateRetour}"  placeholder='' title="Date Retour" id="dateRetour" name="dateRetour" required>
+<label for="prixHT"> prixHT :</label><input type="text" th:value="*{prixHT}" placeholder="Prix Hors Taxe" id="prixHT" name="prixHT" required>
+<label for="nbrePlaces"> Nb Places:</label><input type="text" th:value="*{nbrePlaces}"  placeholder='Nombre de place' title="nbrePlaces" id="nbrePlaces" name="nbrePlaces" required>
+<input hidden=""  th:value="*{dateVoyage.id}" id="idDateVoyage" name="idDateVoyage" >
+<button type="submit">Modifier dates</button>
+</form></br>
+<form th:action="@{backtodestinationdetails}" method="POST"> 
+<input hidden=""  th:value="*{dateVoyage.id}" id="idDateVoyage" name="idDateVoyage" >
+<button type="submit">Retour </button></form>
+
+
+
+
+
+</body>
+</html>
