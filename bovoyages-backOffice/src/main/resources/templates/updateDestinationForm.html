@@ -3,17 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <title>Update Destination Form</title>
+
+
+<style>
+.errors{
+	color: red;
+	
+}
+
+
+#form_1{
+width: 600px;
+margin-left: auto;
+margin-right: auto;
+}
+</style>
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+<script>
+function isEmpty(champ){
+	let err = document.getElementById("error_"+champ.name);
+	err.style.visibility = "hidden";
+
+
+	if(champ.value.trim().length == 0){
+		err.style.visibility = "visible";
+		return true;
+	}
+
+	return false;
+}
+
+
+function verify(){
+	
+	let champs = document.getElementsByClassName('champ_non_vide');
+	for(let i = 0; i< champs.length ; i++){
+		if(isEmpty(champs[i]))
+		event.preventDefault();
+	}
+	
+}
+
+
+
+document.addEventListener("DOMContentLoaded",function(){
+
+	let champs = document.getElementsByClassName('champ_non_vide');
+	for(let i = 0; i< champs.length ; i++){
+	champs[i].addEventListener("blur", function(event){isEmpty(event.target)} );
+	}
+
+
+	let formulaire = document.getElementById('form_1');
+	formulaire.addEventListener("submit", verify)
+
+});
+
+
+</script>
+
+
 </head>
+
+
+
 <body>
-<div th:if="${error}">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/home">Bovoyage  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+    
+      <li class="nav-item">
+        <a class="nav-link" href="/destinationvalid">Destinations <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/index">Se deconnecter </a>
+      </li>
+
+
+    </ul>
+
+  </div>
+</nav>
+
+
+<!--<div th:if="${error}">
 <div class="errors">Erreur</div>
+</div>  -->
+	<form style="margin-left: 30px" th:action="@{backtodestinations}">
+		<button type="submit" class="btn btn-success"> < Retour1</button>
+	</form>
+
+
+<div style="font-size: 1.8em; text-align: center">Modification d'une destination</div>
+
+<form th:action="@{updatedestination2}" th:obkect="${destination}" method="post" id="form_1">
+
+<div class="form-group">
+<label for="region">Région</label><input type="text" th:value="*{region}"  title="Région" id="region" name="region" class="champ_non_vide form-control">
+<span id="error_region" style="visibility: hidden; color: red">Saisir une region</span>
 </div>
-<h2 id="formulaire1">Formulaire de modification d'une destination:</h2>
-<form th:action="@{updatedestination2}" th:obkect="${destination}" method="post">
-<label for="region"> Région :</label><input type="text" th:value="*{region}" placeholder=${destination.region} title="Région" id="region" name="region">
-<label for="description"> Description :</label><input type="text" th:value="*{description}"      placeholder="${destination.description}" title="Description" id="description " name="description">
-<button type="submit">Modifier destination </button>
+
+<div class="form-group">
+<label for="description"> Description :</label><input type="text" th:value="*{description}"   title="Description" id="description " name="description" class="champ_non_vide form-control">
+<br><span id="error_description" style="visibility: hidden; color: red">Veuillez saisir une description</span>
+</div>
+<button type="submit"  class="btn btn-primary btn-sm">Modifier destination </button>
 <input hidden=""  th:value="*{destination.id}" id="id" name="id" ></form>
-<form th:action="@{backtodestinations}"><button type="submit"> Retour </button></form>
-</body>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+
 </html>

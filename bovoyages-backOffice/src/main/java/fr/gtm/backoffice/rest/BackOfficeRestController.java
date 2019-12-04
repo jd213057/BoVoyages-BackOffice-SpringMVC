@@ -178,6 +178,13 @@ public class BackOfficeRestController {
 		model.addAttribute("destinations", destinations);
 		return "destinations";
 	}
+	
+	@GetMapping("/destinationvalid")
+	public String getDestinationNotDeleted1(Model model) {
+		List<Destination> destinations = destinationRepo.getValidDestinations();
+		model.addAttribute("destinations", destinations);
+		return "destinations";
+	}
 
 	/**
 	 * @param id          de type long.
@@ -528,6 +535,13 @@ public class BackOfficeRestController {
 		model.addAttribute("destinations", destinations);
 		return "destinations";
 	}
+	
+	@PostMapping("backtodestinations")
+	public String getBacktoDestinationsPage2(Model model) {
+		List<Destination> destinations = destinationRepo.getValidDestinations();
+		model.addAttribute("destinations", destinations);
+		return "destinations";
+	}
 
 	/**
 	 * @param idDateVoyage de type long.
@@ -536,6 +550,13 @@ public class BackOfficeRestController {
 	 */
 	@PostMapping("backtodestinationdetails")
 	public String getBackToDestinationDetailsPage(@RequestParam("idDateVoyage") long idDateVoyage, Model model) {
+		model.addAttribute("destination", getDestinationByDatesVoyageId(idDateVoyage));
+		model.addAttribute("datesVoyages", getDestinationByDatesVoyageId(idDateVoyage).getDatesVoyages());
+		return "destinationdetails";
+	}
+	
+	@GetMapping("backtodestinationdetails")
+	public String getBackToDestinationDetailsPage2(@RequestParam("idDateVoyage") long idDateVoyage, Model model) {
 		model.addAttribute("destination", getDestinationByDatesVoyageId(idDateVoyage));
 		model.addAttribute("datesVoyages", getDestinationByDatesVoyageId(idDateVoyage).getDatesVoyages());
 		return "destinationdetails";

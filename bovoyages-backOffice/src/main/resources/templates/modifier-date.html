@@ -3,44 +3,240 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
+
+<style>
+
+#form_1
+{
+width: 200px;
+margin-left: auto;
+margin-right: auto;
+}
+
+</style>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<script>
+function isNumberOnly(prix){
+	let err = document.getElementById("error_prixHT");
+	err.style.visibility = "hidden";
+
+	
+	var expReg = /^\d+$/;
+
+	if(prix.value.match(expReg)){
+	 return true;
+	}
+	else{
+		err.style.visibility = "visible";
+		return false;
+	}
+
+}
+
+
+function isNullOrNegative(champ){
+	let err = document.getElementById("error_"+champ.name);
+	err.style.visibility = "hidden";
+
+	if(champ.value <= 0 ){
+		err.style.visibility = "visible";
+		return true;
+	}
+
+	return false;
+}
+
+
+
+
+
+function isEmpty(champ){
+	let err = document.getElementById("error_"+champ.name);
+	err.style.visibility = "hidden";
+
+
+	if(champ.value.trim().length == 0){
+		err.style.visibility = "visible";
+		return true;
+	}
+
+	return false;
+}
+
+
+function endSupToStart()
+{
+    var dateAller = document.getElementById("dateAller").value;
+    var dateRetour = document.getElementById("dateRetour").value;
+	
+	let err = document.getElementById("error_dateRetour");
+	err.style.visibility = "hidden";
+
+    if( (new Date(dateAller).getTime() < new Date(dateRetour).getTime()))
+    {
+        // Your code here
+		return true;
+    }
+	
+	else{
+		err.style.visibility = "visible";
+		return false;
+	}
+	
+}
+
+
+function verify(){
+	
+	let champs = document.getElementsByClassName('champ_non_vide');
+	for(let i = 0; i< champs.length ; i++){
+	if(isNullOrNegative(champs[i]) || isEmpty(champs[i])){
+		event.preventDefault();
+	}
+}
+
+	if(!endSupToStart())
+	{
+		event.preventDefault();
+	}
+
+	let prixHT = document.getElementById('prixHT');
+	if(!isNumberOnly(prixHT))
+	{
+		event.preventDefault();
+	}
+
+
+
+}
+
+
+document.addEventListener("DOMContentLoaded",function(){
+
+	let champs = document.getElementsByClassName('champ_non_vide');
+	for(let i = 0; i< champs.length ; i++){
+	champs[i].addEventListener("blur", function(event){isEmpty(event.target)} );
+	champs[i].addEventListener("blur", function(event){isNullOrNegative(event.target)} );
+	}
+
+	let prixHT = document.getElementById('prixHT');
+	prixHT.addEventListener("blur",function(event){isNumberOnly(event.target)} );
+
+
+
+	let formulaire = document.getElementById('form_1');
+	formulaire.addEventListener("submit", verify);
+
+
+})
+
+
+
+</script>
+
+
+
 </head>
 <body>
 
-<h2>Modification de la date:</h2>
 
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/home">Bovoyage</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+    
+      <li class="nav-item">
+        <a class="nav-link" href="/destinationvalid">Destinations <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/index">Se deconnecter</a>
+      </li>
+
+
+    </ul>
+
+  </div>
+</nav>
+
+
+
+
+
+
+<div style="font-size: 1.8em; text-align: center">Modification de la date</div>
 <div th:object="${dateVoyage}"></div>
 
-Etat actuel de la date : 
 
-<table>
+<form style="margin-left: 30px" th:action="@{backtodestinationdetails}">
+		<button type="submit" class="btn btn-success"> < Retour</button>
+</form>
 
-      <tr>
-      	<td>- Départ :</td>
+<a href="/backtodestinations">Retour2.1</a>
+
+<div style="font-size: 1.5em; text-align: center">Etat Actuel</div>
+<br>
+	<table  class="table table-striped" style="width: 90%; margin-left: auto; margin-right: auto; border-radius: 10px; background-color: rgba(200,300,30,0.3)">
+     <div> 
+     
+       <tr>
+			<td>Depart</td>
+         <td>Retour</td>
+         <td>Nombre de places</td>
+         <td>Prix HT</td>
+
+      </tr> 
+     
+     
+     
+     <tr>
          <td th:text="${dateVoyage.dateAller}">Départ:</td>
-         <td>- Retour :</td>
          <td th:text="${dateVoyage.dateRetour}">Retour :</td>
-         <td>- Nombre de places :</td>
          <td th:text="${dateVoyage.nbrePlaces}">Nb Places:</td>
-         <td>- Prix HT:</td>
          <td th:text="${dateVoyage.prixHT}">Prix HT/voyageur :</td>
 
       </tr>
+      </div>
 <table>
 
 
 
-<form th:action="@{modifierdate2}" method="post">
-<label for="dateAller"> Date Aller :</label><input type="date"  th:value="*{dateAller}" placeholder='' title="Date Aller" id="dateAller" name="dateAller" required>
-<label for="dateRetour"> Date Retour :</label><input type="date" th:value="*{dateRetour}"  placeholder='' title="Date Retour" id="dateRetour" name="dateRetour" required>
-<label for="prixHT"> prixHT :</label><input type="text" th:value="*{prixHT}" placeholder="Prix Hors Taxe" id="prixHT" name="prixHT" required>
-<label for="nbrePlaces"> Nb Places:</label><input type="text" th:value="*{nbrePlaces}"  placeholder='Nombre de place' title="nbrePlaces" id="nbrePlaces" name="nbrePlaces" required>
-<input hidden=""  th:value="*{dateVoyage.id}" id="idDateVoyage" name="idDateVoyage" >
-<button type="submit">Modifier dates</button>
-</form></br>
-<form th:action="@{backtodestinationdetails}" method="POST"> 
-<input hidden=""  th:value="*{dateVoyage.id}" id="idDateVoyage" name="idDateVoyage" >
-<button type="submit">Retour </button></form>
+<form  id="form_1" th:action="@{modifierdate2}" method="post">
 
+<div class="form-group">
+<label for="dateAller"> Date Aller :</label><input type="date"  th:value="*{dateAller}" placeholder='' title="Date Aller" id="dateAller" name="dateAller" class="form-control" required>
+</div> 
+
+<div class="form-group">
+<label for="dateRetour"> Date Retour :</label><input type="date" th:value="*{dateRetour}"  placeholder='' title="Date Retour" id="dateRetour" name="dateRetour" class="form-control" required>
+<span id="error_dateRetour" style="visibility: hidden ; color: red">Veuillez saisir une date Retour supérieure à la date aller</span>
+</div> 
+
+<div class="form-group">
+<label for="prixHT"> prixHT :</label><input type="number" th:value="*{prixHT}" placeholder="Prix Hors Taxe" id="prixHT" name="prixHT"  class="form-control" min="1" required>
+<span id="error_prixHT" style="visibility: hidden ; color: red">Attention votre prix est incorrect !</span>
+</div> 
+	
+			
+<div class="form-group">
+<label for="nbrePlaces"> Nb Places:</label><input type="number" th:value="*{nbrePlaces}"  placeholder='Nombre de place' title="nbrePlaces" id="nbrePlaces" name="nbrePlaces"   class="form-control"  min="1" required>
+<span id="error_nbPlaces" style="visibility: hidden ; color: red">Attention votre nombre de place est incorrect !</span>
+</div>
+
+
+<input hidden=""  th:value="*{dateVoyage.id}" id="idDateVoyage" name="idDateVoyage" >
+
+<button type="submit" class="btn btn-primary btn-sm">Modifier dates</button>
+
+</form>
+</br>
 
 
 
