@@ -98,6 +98,12 @@ public class BackOfficeRestController {
 	public String home() {
 		return "home";
 	}
+	
+	
+	@GetMapping("/index")
+	public String index1() {
+		return "index";
+	}
 
 	/**
 	 * @param destination de type Destination
@@ -428,6 +434,14 @@ public class BackOfficeRestController {
 	public String signing(Model model) {
 		Commercial commercial = new Commercial();
 		model.addAttribute("commercial", commercial);
+		return "signup";
+	}
+	
+	
+	@GetMapping("/signupform1")
+	public String signing1(Model model1) {
+		Commercial commercial = new Commercial();
+		model1.addAttribute("commercial", commercial);
 		return "signup";
 	}
 
