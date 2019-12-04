@@ -41,6 +41,13 @@ public class Destination implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_destination")
     private List<DatesVoyage> datesVoyages = new ArrayList<DatesVoyage>();
+    
+    /**
+     * Attribut images de type List<Image>. 
+     */
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch=FetchType.LAZY)
+    @JoinColumn(name="fk_destination")
+    private List<Image> images=new ArrayList<Image>();
 
     /**
      * @param region de type String.
@@ -117,6 +124,20 @@ public class Destination implements Serializable {
     public void setDatesVoyages(List<DatesVoyage> datesVoyages) {
         this.datesVoyages = datesVoyages;
     }
+    
+    
+
+	public List<Image> getImages() {
+		return images;
+	}
+
+
+
+	public void setImages(List<Image> images) {
+		this.images = images;
+	}
+
+
 
 	@Override
 	public int hashCode() {
@@ -125,10 +146,13 @@ public class Destination implements Serializable {
 		result = prime * result + ((datesVoyages == null) ? 0 : datesVoyages.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((images == null) ? 0 : images.hashCode());
 		result = prime * result + (raye ? 1231 : 1237);
 		result = prime * result + ((region == null) ? 0 : region.hashCode());
 		return result;
 	}
+
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -151,6 +175,11 @@ public class Destination implements Serializable {
 			return false;
 		if (id != other.id)
 			return false;
+		if (images == null) {
+			if (other.images != null)
+				return false;
+		} else if (!images.equals(other.images))
+			return false;
 		if (raye != other.raye)
 			return false;
 		if (region == null) {
@@ -160,6 +189,18 @@ public class Destination implements Serializable {
 			return false;
 		return true;
 	}
+
+
+
+	@Override
+	public String toString() {
+		return "Destination [id=" + id + ", region=" + region + ", description=" + description + ", raye=" + raye
+				+ ", datesVoyages=" + datesVoyages + ", images=" + images + "]";
+	}
+
+
+
+	
 
 
 }

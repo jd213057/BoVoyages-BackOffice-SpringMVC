@@ -18,10 +18,16 @@
 		<ul>
 			<li th:each="file : ${files}">
 				<a th:href="${file}" th:text="${file}" />
+				
 			</li>
 		</ul>
 	</div>
 	
+
+	
 <form th:action="@{home}" Method="GET"><button type="submit">Retour à la page d'Accueil </button></form>
+
+<form Method="GET" th:action=@{displayimage}><button> Afficher image </button></form>
+
 </body>
 </html>
