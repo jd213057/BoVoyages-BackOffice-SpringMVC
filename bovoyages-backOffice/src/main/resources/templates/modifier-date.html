@@ -9,7 +9,7 @@
 
 #form_1
 {
-width: 200px;
+width: 100px;
 margin-left: auto;
 margin-right: auto;
 }
@@ -175,11 +175,12 @@ document.addEventListener("DOMContentLoaded",function(){
 <div th:object="${dateVoyage}"></div>
 
 
-<form style="margin-left: 30px" th:action="@{backtodestinationdetails}">
+<!-- <form style="margin-left: 30px" th:action="@{backtodestinationdetails}">
+<input hidden=""  th:value="*{dateVoyage.id}" id="idDateVoyage" name="idDateVoyage" >
 		<button type="submit" class="btn btn-success"> < Retour</button>
 </form>
 
-<a href="/backtodestinations">Retour2.1</a>
+<a href="/destinationvalid">Retour2.2</a>-->
 
 <div style="font-size: 1.5em; text-align: center">Etat Actuel</div>
 <br>
@@ -205,6 +206,18 @@ document.addEventListener("DOMContentLoaded",function(){
       </tr>
       </div>
 <table>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
