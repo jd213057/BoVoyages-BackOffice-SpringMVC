@@ -7,6 +7,8 @@
 
 	<div>
 		<form method="POST" enctype="multipart/form-data" action="/images2">
+		<input hidden="" th:value="*{destination.id}" id="idDestination"
+								name="idDestination">
 			<table>
 				<tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
 				<tr><td></td><td><input type="submit" value="Upload" /></td></tr>

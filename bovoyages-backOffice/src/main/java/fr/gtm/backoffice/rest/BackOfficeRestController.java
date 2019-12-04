@@ -35,11 +35,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import fr.gtm.backoffice.entities.Commercial;
 import fr.gtm.backoffice.entities.DatesVoyage;
 import fr.gtm.backoffice.entities.Destination;
+import fr.gtm.backoffice.entities.Image;
 import fr.gtm.backoffice.images.StorageFileNotFoundException;
 import fr.gtm.backoffice.images.StorageService;
 import fr.gtm.backoffice.repositories.CommercialRepository;
 import fr.gtm.backoffice.repositories.DatesVoyageRepository;
 import fr.gtm.backoffice.repositories.DestinationRepository;
+import fr.gtm.backoffice.repositories.ImageRepository;
 import fr.gtm.backoffice.util.Digest;
 
 /**
@@ -66,11 +68,15 @@ public class BackOfficeRestController {
 	 */
 	@Autowired
 	private DatesVoyageRepository datesVoyageRepo;
+	
+	@Autowired
+	private ImageRepository imageRepo;
 
 	/**
 	 * attribut storageService de type StorageService.
 	 */
 	private final StorageService storageService;
+	
 
 	/**
 	 * @param storageService de type StorageService.
@@ -456,14 +462,15 @@ public class BackOfficeRestController {
 	 * @throws IOException
 	 */
 	@PostMapping("/images")
-	public String listUploadedFiles(Model model) throws IOException {
+	public String listUploadedFiles(@RequestParam("idDestination")long idDestination, Model model) throws IOException {
 
 		model.addAttribute("files", storageService.loadAll()
 				.map(path -> MvcUriComponentsBuilder
 						.fromMethodName(BackOfficeRestController.class, "serveFile", path.getFileName().toString())
 						.build().toString())
 				.collect(Collectors.toList()));
-
+		Destination destination = destinationRepo.findById(idDestination).get();
+        model.addAttribute("destination", destination);
 		return "uploadForm";
 	}
 
@@ -487,12 +494,23 @@ public class BackOfficeRestController {
 	 * @return
 	 */
 	@PostMapping("/images2")
-	public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+	public String handleFileUpload(@RequestParam("idDestination")long  idDestination, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes, Model model) {
 		storageService.store(file);
 		redirectAttributes.addFlashAttribute("message",
 				"You successfully uploaded " + file.getOriginalFilename() + "!");
-
-		return "home";
+		Image image = new Image();
+		String imageName= file.getOriginalFilename();
+		image.setImage(imageName);
+        imageRepo.save(image);
+		Destination destination = destinationRepo.findById(idDestination).get();
+		List<Image> images = destination.getImages();
+		images.add(image);
+		destination.setImages(images);
+		destinationRepo.save(destination);
+		List<DatesVoyage> datesVoyages = destination.getDatesVoyages();
+		model.addAttribute("destination", destination);
+		model.addAttribute("datesVoyages", datesVoyages);
+		return "destinationdetails";
 	}
 
 	/**
