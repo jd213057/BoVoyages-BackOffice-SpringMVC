@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded",function(){
     <label for="username">Login</label><input type="text" th:value="*{username}" id="username" name="username" class="champ_non_vide form-control" placeholder="Identifiants">
     <span id="error_username" style="visibility: hidden; color: red">Veuillez saisir un login</span>
     
-    <input th:value="*{password}" id="password" name="password" type="password" class="champ_non_vide form-control" placeholder="Mot de Passe">
+    <input th:value="*{password}" id="password" name="password" type="password" class="champ_non_vide form-control" minlength="8" placeholder="Mot de Passe">
     <span id="error_password" style="visibility: hidden; color: red">Veuillez saisir une Mot de passe</span>
     
     <button class="btn btn-primary btn-sm"> Connexion </button>
